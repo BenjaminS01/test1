@@ -1,0 +1,57 @@
+
+body{
+	background-color: #FBEFF2;
+}
+
+h1 { 
+  color: #F7BE81;
+}
+hr {
+	margin-bottom: 40px;
+	margin-top: 40px;
+}
+
+ul {
+	color: #F7BE81;
+}
+
+
+  div { font-size: 3.1em; 
+		background-color: #F2F2F2;
+		border-style: solid;
+		border-width: 20px;
+		border-color: black;
+		margin-left: 30px;
+		margin-right: 30px;
+		margin-bottom: 60px;
+		padding: 10px 10px 10px 10px
+		
+		}
+  
+  p{
+	 font-family: "Lucida Console";
+	 color: black;
+	 background-color: #F2F2F2;
+	 
+  }
+  
+   img{
+	   margin-top: 40px;
+	   margin-left: 500px;
+	   lenght: 640px;
+	   width: 320px;
+	   
+   }
+   
+   
+   table {
+	   margin-left: 50px;
+	   border: 1px solid black; 
+  border-collapse: separate;
+  background-color: white;
+   }
+   td{
+	  border: 1px solid black; 
+   }
+  
+   
