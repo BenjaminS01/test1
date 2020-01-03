@@ -3,6 +3,7 @@ package de.bord.festival.ticket;
 import de.bord.festival.client.Client;
 import de.bord.festival.exception.TicketManagerException;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -15,6 +16,11 @@ public class TicketManager {
     private ArrayList<PriceLevel> priceLevels;
     private int nPriceLevels;
    // private double actualPriceLevelPercentage;
+
+    private DayTicket dayTicket;
+    private CampingTicket campingTicket;
+    private VIPTicket vipTicket;
+
     private int actualPriceLevel = 0;
     private int nDayticketsLeft;
     private int nCampingticketsLeft;
@@ -33,14 +39,17 @@ public class TicketManager {
     public TicketManager(ArrayList<PriceLevel> priceLevels,
                          int nPriceLevels,
                          int nDaytickets,
-                         int nCampingtickets,int nViptickets ){
+                         int nCampingtickets,int nViptickets,
+                         DayTicket dayTicket, CampingTicket campingTicket, VIPTicket vipTicket){
 
+        this.dayTicket = dayTicket;
+        this.campingTicket = campingTicket;
+        this.vipTicket = vipTicket;
         this.priceLevels = priceLevels;
         Collections.sort(priceLevels);   //exception
         this.nPriceLevels = nPriceLevels;
         this.incomeTicketSales = 0.0;
         this.automaticPriceLevelChange = true;
-        //this.actualPriceLevelPercentage = priceLevels.get(0).getPercentageOfSoldTickets();
         this.nDayticketsLeft = nDaytickets;
         this.nCampingticketsLeft = nCampingtickets;
         this.nVipticketsLeft = nViptickets;
@@ -48,6 +57,58 @@ public class TicketManager {
         this.nCampingtickets = nCampingtickets;
         this.nViptickets = nViptickets;
 
+    }
+
+    public Ticket getTicketForClient(Ticket.TicketType type){
+        if (type == Ticket.TicketType.DAY) {
+            return dayTicket;
+        } else if (type == Ticket.TicketType.CAMPING) {
+            return campingTicket;
+        } else if(type == Ticket.TicketType.VIP) {
+            return vipTicket;
+        }
+        else{
+            return null;
+        }
+    }
+
+    public void ticketIdCounter(Ticket.TicketType type){
+        if (type == Ticket.TicketType.DAY) {
+            dayTicket.idCounter();
+        } else if (type == Ticket.TicketType.CAMPING) {
+            campingTicket.idCounter();
+        } else if (type == Ticket.TicketType.VIP) {
+            vipTicket.idCounter();
+        }
+    }
+
+    public void setAvailable(boolean available, Ticket.TicketType type){
+        if (type == Ticket.TicketType.DAY) {
+           this.dayTicket.setAvailable(available);
+        } else if (type == Ticket.TicketType.CAMPING) {
+            this.campingTicket.setAvailable(available);
+        } else if (type == Ticket.TicketType.VIP) {
+           this.vipTicket.setAvailable(available);
+        }
+    }
+
+    public void setDescription(String description, Ticket.TicketType type){
+        if (type == Ticket.TicketType.DAY) {
+            this.dayTicket.setDescription(description);
+        } else if (type == Ticket.TicketType.CAMPING) {
+            this.campingTicket.setDescription(description);
+        } else if (type == Ticket.TicketType.VIP) {
+            this.vipTicket.setDescription(description);
+        }
+    }
+    public void setStdPrice(double stdPrice, Ticket.TicketType type){
+        if (type == Ticket.TicketType.DAY) {
+            this.dayTicket.setStdPrice(stdPrice);
+        } else if (type == Ticket.TicketType.CAMPING) {
+            this.campingTicket.setStdPrice(stdPrice);
+        } else if (type == Ticket.TicketType.VIP) {
+            this.vipTicket.setStdPrice(stdPrice);
+        }
     }
 
     /**
@@ -130,7 +191,7 @@ public class TicketManager {
      */
     public void setAutomaticPriceLevelChange(boolean isPriceLevelChangeAutomatic) throws TicketManagerException {
 
-        if (isPriceLevelChangeAutomatic == true) {
+        if (isPriceLevelChangeAutomatic) {
             actualPriceLevel = 0;
             int i = 0;
             while (i < priceLevels.size()) {
@@ -146,7 +207,7 @@ public class TicketManager {
     }
 
     public boolean setPriceLevel(int index){    /////////exception
-        if(getAutomaticPriceLevelChange() == true && index >= 0 && index < priceLevels.size()){
+        if(getAutomaticPriceLevelChange() && index >= 0 && index < priceLevels.size()){
             actualPriceLevel = index;
             return true;
         }
@@ -156,24 +217,22 @@ public class TicketManager {
     }
 
 
-    public boolean sellTickets(Client client) throws TicketManagerException {
+    public boolean sellTickets(Client client /*, LocalDate date*/) throws TicketManagerException {
 
-        List<Ticket> ticketList = client.get_cart(); ///////TODO
-        Ticket ticket = ticketList.get(0);
         int nDayTicketsSold = 0;
         int nCampingTicketsSold = 0;
         int nVIPTicketsSold = 0;
         double ticketIncome = 0.0;
 
         int i = 0;
-        while (i < ticketList.size()) {
-            if (ticketList.get(i).getTicketType() == Ticket.TicketType.DAY && getnDayticketsLeft() >= 1) {
+        while (i < client.get_cartSize()) {
+            if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.DAY && getnDayticketsLeft() >= 1) {
                 nDayTicketsSold++;
                 ticketIncome += priceLevels.get(actualPriceLevel).getDayTicketPrice();
-            } else if (ticketList.get(i).getTicketType() == Ticket.TicketType.CAMPING && getnCampingticketsLeft() >= 1) {
+            } else if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.CAMPING && getnCampingticketsLeft() >= 1) {
                 nCampingTicketsSold++;
                 ticketIncome += priceLevels.get(actualPriceLevel).getCampingTicketPrice();
-            } else if (ticketList.get(i).getTicketType() == Ticket.TicketType.VIP && getnVipticketsLeft() >= 1) {
+            } else if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.VIP && getnVipticketsLeft() >= 1) {
                 nVIPTicketsSold++;
                 ticketIncome += priceLevels.get(actualPriceLevel).getVipTicketPrice();
             } else {
@@ -184,12 +243,14 @@ public class TicketManager {
         this.nDayticketsLeft -= nDayTicketsSold;
         this.nCampingticketsLeft -= nCampingTicketsSold;
         this.nVipticketsLeft -= nVIPTicketsSold;
-        client.get_tickets().addAll(client.get_cart());
+
+        client.add_cartToTickets();
         client.clear_cart();
         updateIncomeTicketSales(ticketIncome);
-        if(automaticPriceLevelChange == true){
+
+        if(automaticPriceLevelChange){
             updatePriceLevel();
         }
-        return true;   // boolean oder client mit Warenkorb
+        return true;
     }
 }

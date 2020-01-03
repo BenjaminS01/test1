@@ -188,6 +188,22 @@ public class Event {
     public int getnVipticketsLeft() { return ticketManager.getnVipticketsLeft(); }
     public int totalNumberOfTicketsLeft(){return ticketManager.totalNumberOfTicketsLeft();}
 
+
+    public boolean sellTickets(int id /* ,LocalDate date */) throws TicketManagerException{
+        return ticketManager.sellTickets(getClientById(id) /* ,LocalDate date */);
+    }
+
+    public Client getClientById(int id){
+
+        int i = 0;
+        while(i<client.size()){
+            if(client.get(i).get_id() == id){
+                return client.get(i);
+            }
+        }
+        return null;
+    }
+
     /**
      *  shows the income from sold tickets
      */

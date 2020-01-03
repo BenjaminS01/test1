@@ -4,7 +4,7 @@ import de.bord.festival.eventManagement.Event;
 
 public abstract class Ticket {
 
-    enum TicketType {DAY, CAMPING, VIP}
+    public enum TicketType {DAY, CAMPING, VIP}
 
 
     protected int id;
@@ -25,4 +25,18 @@ public abstract class Ticket {
     }
 
     abstract public TicketType getTicketType();
+
+   public void setAvailable(boolean available){
+        this.available = available;
+    }
+   public void idCounter(){
+        this.id ++;
+    }
+    public void setDescription(String description){
+       this.description = description;
+    }
+    public void setStdPrice(double stdPrice){
+       this.stdPrice = stdPrice;
+    }
+
 }

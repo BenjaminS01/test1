@@ -97,12 +97,39 @@ public class Client implements IClient {
         this._tickets.add(ticket);
     }
 
-    public LinkedList<Ticket> get_tickets() {
-        return _tickets;
+    public void addTicket(Ticket.TicketType type, TicketManager ticketmanager) throws TicketException {
+        if(!ticketmanager.getTicketForClient(type).isAvailable()) {
+            throw new TicketException("No more tickets available");
+        }
+            if(ticketmanager.getTicketForClient(type)!= null) {
+                this._tickets.add(ticketmanager.getTicketForClient(type));
+                ticketmanager.ticketIdCounter(type);
+            }
     }
 
-    public LinkedList<Ticket> get_cart() {
+
+    public int get_id(){
+        return _id;
+    }
+
+    public Ticket get_ticket(int index) {
+        return _tickets.get(index);
+    }
+
+    public void add_cartToTickets(){
+        _tickets.addAll(_cart);
+    }
+
+    public LinkedList<Ticket> get_cart() {///////////////
         return _cart;
+    }
+
+    public Ticket get_cartItem(int index) {
+        return _cart.get(index);
+    }
+
+    public int get_cartSize(){
+        return _cart.size();
     }
 
     public void clear_cart(){
