@@ -189,20 +189,10 @@ public class Event {
     public int totalNumberOfTicketsLeft(){return ticketManager.totalNumberOfTicketsLeft();}
 
 
-    public boolean sellTickets(int id /* ,LocalDate date */) throws TicketManagerException{
-        return ticketManager.sellTickets(getClientById(id) /* ,LocalDate date */);
+    public Client sellTickets(Client client /* ,LocalDate date */) throws TicketManagerException{
+        return ticketManager.sellTickets(client /* ,LocalDate date */);
     }
 
-    public Client getClientById(int id){
-
-        int i = 0;
-        while(i<client.size()){
-            if(client.get(i).get_id() == id){
-                return client.get(i);
-            }
-        }
-        return null;
-    }
 
     /**
      *  shows the income from sold tickets
@@ -214,7 +204,7 @@ public class Event {
     /**
      *  the index of the actual price level
      */
-    public int getPricelevel(){return ticketManager.getPriceLevel();}
+    public int getActualPriceLevelIndex(){return ticketManager.getActualPriceLevelIndex();}
 
 
     /**

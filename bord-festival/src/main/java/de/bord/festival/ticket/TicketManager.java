@@ -56,15 +56,18 @@ public class TicketManager {
         this.nDaytickets = nDaytickets;
         this.nCampingtickets = nCampingtickets;
         this.nViptickets = nViptickets;
-
+        setTicketPrices();
     }
 
-    public Ticket getTicketForClient(Ticket.TicketType type){
+    public Ticket getTicket(Ticket.TicketType type){
         if (type == Ticket.TicketType.DAY) {
+            ticketIdCounter(type);
             return dayTicket;
         } else if (type == Ticket.TicketType.CAMPING) {
+            ticketIdCounter(type);
             return campingTicket;
         } else if(type == Ticket.TicketType.VIP) {
+            ticketIdCounter(type);
             return vipTicket;
         }
         else{
@@ -111,6 +114,14 @@ public class TicketManager {
         }
     }
 
+
+
+    public void setTicketPrices(){
+        dayTicket.setStdPrice(priceLevels.get(actualPriceLevel).getDayTicketPrice());
+        campingTicket.setStdPrice(priceLevels.get(actualPriceLevel).getCampingTicketPrice());
+        vipTicket.setStdPrice(priceLevels.get(actualPriceLevel).getVipTicketPrice());
+    }
+
     /**
      * will be queried after every ticket sale
      * Once a fixed percentage has been exceeded, the next price level starts.
@@ -120,6 +131,7 @@ public class TicketManager {
 
         if(isPercentageOfSoldTicketsExceeded()&& this.priceLevels.size() < this.actualPriceLevel+1){
             this.actualPriceLevel++;
+            setTicketPrices();
             }
       /*  else if(){
 
@@ -180,9 +192,11 @@ public class TicketManager {
     }
 
 
-    public int getPriceLevel(){   //Exception
+    public int getActualPriceLevelIndex(){   //Exception
         return actualPriceLevel;
     }
+
+    public PriceLevel getPriceLevel(int index){return priceLevels.get(index);}
 
 
     /**
@@ -207,8 +221,9 @@ public class TicketManager {
     }
 
     public boolean setPriceLevel(int index){    /////////exception
-        if(getAutomaticPriceLevelChange() && index >= 0 && index < priceLevels.size()){
+        if(!getAutomaticPriceLevelChange() && index >= 0 && index < priceLevels.size()){
             actualPriceLevel = index;
+            setTicketPrices();
             return true;
         }
         else{
@@ -216,8 +231,8 @@ public class TicketManager {
         }
     }
 
-
-    public boolean sellTickets(Client client /*, LocalDate date*/) throws TicketManagerException {
+/////////////////////client zurückgeben
+    public Client sellTickets(Client client /*, LocalDate date*/) throws TicketManagerException {
 
         int nDayTicketsSold = 0;
         int nCampingTicketsSold = 0;
@@ -228,15 +243,18 @@ public class TicketManager {
         while (i < client.get_cartSize()) {
             if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.DAY && getnDayticketsLeft() >= 1) {
                 nDayTicketsSold++;
-                ticketIncome += priceLevels.get(actualPriceLevel).getDayTicketPrice();
+                /*ticketIncome += priceLevels.get(actualPriceLevel).getDayTicketPrice();*/
+                ticketIncome += client.get_ticket(i).getStdPrice();
             } else if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.CAMPING && getnCampingticketsLeft() >= 1) {
                 nCampingTicketsSold++;
-                ticketIncome += priceLevels.get(actualPriceLevel).getCampingTicketPrice();
+                /*ticketIncome += priceLevels.get(actualPriceLevel).getCampingTicketPrice();*/
+                ticketIncome += client.get_ticket(i).getStdPrice();
             } else if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.VIP && getnVipticketsLeft() >= 1) {
                 nVIPTicketsSold++;
-                ticketIncome += priceLevels.get(actualPriceLevel).getVipTicketPrice();
+                /*ticketIncome += priceLevels.get(actualPriceLevel).getVipTicketPrice();*/
+                ticketIncome += client.get_ticket(i).getStdPrice();
             } else {
-                return false;
+                return null;
             }
             i++;
         }
@@ -247,10 +265,11 @@ public class TicketManager {
         client.add_cartToTickets();
         client.clear_cart();
         updateIncomeTicketSales(ticketIncome);
+        client.setExpenditure(ticketIncome);
 
         if(automaticPriceLevelChange){
             updatePriceLevel();
         }
-        return true;
+        return client;
     }
 }

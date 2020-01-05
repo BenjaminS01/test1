@@ -3,15 +3,12 @@ package de.bord.festival.help;
 import de.bord.festival.address.Address;
 import de.bord.festival.band.Band;
 import de.bord.festival.band.EventInfo;
+import de.bord.festival.client.Client;
 import de.bord.festival.eventManagement.Event;
 import de.bord.festival.eventManagement.LineUp;
-import de.bord.festival.exception.BudgetException;
-import de.bord.festival.exception.DateException;
-import de.bord.festival.exception.PriceLevelException;
-import de.bord.festival.exception.TimeException;
+import de.bord.festival.exception.*;
 import de.bord.festival.stageManagement.Stage;
-import de.bord.festival.ticket.PriceLevel;
-import de.bord.festival.ticket.TicketManager;
+import de.bord.festival.ticket.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -88,7 +85,7 @@ public class HelpClasses {
     public TicketManager exampleTicketManager() throws PriceLevelException {
         PriceLevel p1 = new PriceLevel(20.00, 39.99, 54.99,
                 70.00);
-        PriceLevel p2 = new PriceLevel(30.00, 49.99, 64.99,
+        PriceLevel p2 = new PriceLevel(30.00, 49.99, 52.49,
                 50.00);
         PriceLevel p3 = new PriceLevel(40.00, 59.99, 74.99,
                 60.00);
@@ -97,6 +94,23 @@ public class HelpClasses {
         priceLevels.add(p2);
         priceLevels.add(p3);
 
-        return new TicketManager(priceLevels, 3, 10,20,30);
+        DayTicket dayTicket = new DayTicket(Ticket.TicketType.DAY, 0, "day test", true, 01,"01.01.2020");
+        CampingTicket campingTicket = new CampingTicket(Ticket.TicketType.CAMPING, 1000, "camping test", true, 02 );
+        VIPTicket vipTicket = new VIPTicket(Ticket.TicketType.VIP, 5000, "vip test", true, 100.00);
+
+        return new TicketManager(priceLevels, 3, 10,20,30, dayTicket, campingTicket, vipTicket);
     }
+
+    public Client exampleClientWith4Tickets() throws MailException, ClientNameException, PriceLevelException, TicketException {
+        Client client = new Client("Max", "Muster","max@test.de",1,getAddress());
+        TicketManager t1 =  exampleTicketManager();
+
+        client.addTicket(Ticket.TicketType.DAY, t1);
+        client.addTicket(Ticket.TicketType.CAMPING, t1);
+        client.addTicket(Ticket.TicketType.VIP, t1);
+        client.addTicket(Ticket.TicketType.CAMPING, t1);
+
+        return client;
+    }
+
 }
