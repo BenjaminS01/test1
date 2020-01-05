@@ -101,8 +101,27 @@ public class HelpClasses {
         return new TicketManager(priceLevels, 3, 10,20,30, dayTicket, campingTicket, vipTicket);
     }
 
+    public TicketManager example2TicketManager() throws PriceLevelException {
+        PriceLevel p1 = new PriceLevel(20.00, 39.99, 54.99,
+                70.00);
+        PriceLevel p2 = new PriceLevel(30.00, 49.99, 52.49,
+                50.00);
+        PriceLevel p3 = new PriceLevel(40.00, 59.99, 74.99,
+                60.00);
+        ArrayList<PriceLevel> priceLevels = new ArrayList<>();
+        priceLevels.add(p1);
+        priceLevels.add(p2);
+        priceLevels.add(p3);
+
+        DayTicket dayTicket = new DayTicket(Ticket.TicketType.DAY, 0, "day test", true, 01,"01.01.2020");
+        CampingTicket campingTicket = new CampingTicket(Ticket.TicketType.CAMPING, 1000, "camping test", true, 02 );
+        VIPTicket vipTicket = new VIPTicket(Ticket.TicketType.VIP, 5000, "vip test", true, 100.00);
+
+        return new TicketManager(priceLevels, 3, 2,6,2, dayTicket, campingTicket, vipTicket);
+    }
+
     public Client exampleClientWith4Tickets() throws MailException, ClientNameException, PriceLevelException, TicketException {
-        Client client = new Client("Max", "Muster","max@test.de",1,getAddress());
+        Client client = exampleClient();
         TicketManager t1 =  exampleTicketManager();
 
         client.addTicket(Ticket.TicketType.DAY, t1);
@@ -111,6 +130,10 @@ public class HelpClasses {
         client.addTicket(Ticket.TicketType.CAMPING, t1);
 
         return client;
+    }
+
+    public Client exampleClient() throws MailException, ClientNameException {
+       return new Client("Max", "Muster","max@test.de",1,getAddress());
     }
 
 }

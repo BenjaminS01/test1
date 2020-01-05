@@ -28,7 +28,7 @@ public class Event {
     private final double budget;//budget for bands
     private double actualCosts = 0;
     private LineUp lineUp;
-    private LinkedList<Client> client;
+    private LinkedList<Client> client;  ///// KANN WEG ????????
     private int maxCapacity;
     private Address address;
 

@@ -129,7 +129,7 @@ public class TicketManager {
     private void updatePriceLevel() throws TicketManagerException {
 
 
-        if(isPercentageOfSoldTicketsExceeded()&& this.priceLevels.size() < this.actualPriceLevel+1){
+        if(isPercentageOfSoldTicketsExceeded()&& this.priceLevels.size() > this.actualPriceLevel+1){
             this.actualPriceLevel++;
             setTicketPrices();
             }
@@ -143,7 +143,7 @@ public class TicketManager {
 
         private boolean isPercentageOfSoldTicketsExceeded(){
 
-            if(totalNumberOfSoldTicketsInPercent() < priceLevels.get(this.actualPriceLevel).getPercentageForPricelevel()){
+            if(totalNumberOfSoldTicketsInPercent() > priceLevels.get(this.actualPriceLevel).getPercentageForPricelevel()){
                 /*getPriceLevel(this.actualPriceLevel).getPercentageForPricelevel()*/
                 return true;
             }
@@ -180,7 +180,11 @@ public class TicketManager {
     public int getnSoldCampingtickets(){ return nCampingtickets - nCampingticketsLeft;}
     public int getnSoldViptickets(){ return nViptickets - nVipticketsLeft;}
     public int totalNumberOfSoldTickets(){ return totalNumberOfTickets()-totalNumberOfTicketsLeft();}
-    public double totalNumberOfSoldTicketsInPercent(){return (totalNumberOfTicketsLeft()/totalNumberOfTickets())*100;}
+    public double totalNumberOfSoldTicketsInPercent(){
+        double totalNumberOfTicketsLeft = (double)totalNumberOfTicketsLeft();   // /totalNumberOfTickets()*100;
+        double totalNumberOfTickets = (double)totalNumberOfTickets();
+        return 100 - (totalNumberOfTicketsLeft/totalNumberOfTickets*100);
+    }
 
 
     private void updateIncomeTicketSales(double ticketPrice){
@@ -244,15 +248,15 @@ public class TicketManager {
             if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.DAY && getnDayticketsLeft() >= 1) {
                 nDayTicketsSold++;
                 /*ticketIncome += priceLevels.get(actualPriceLevel).getDayTicketPrice();*/
-                ticketIncome += client.get_ticket(i).getStdPrice();
+                ticketIncome += client.get_cartItem(i).getStdPrice();
             } else if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.CAMPING && getnCampingticketsLeft() >= 1) {
                 nCampingTicketsSold++;
                 /*ticketIncome += priceLevels.get(actualPriceLevel).getCampingTicketPrice();*/
-                ticketIncome += client.get_ticket(i).getStdPrice();
+                ticketIncome += client.get_cartItem(i).getStdPrice();
             } else if (client.get_cartItem(i).getTicketType() == Ticket.TicketType.VIP && getnVipticketsLeft() >= 1) {
                 nVIPTicketsSold++;
                 /*ticketIncome += priceLevels.get(actualPriceLevel).getVipTicketPrice();*/
-                ticketIncome += client.get_ticket(i).getStdPrice();
+                ticketIncome += client.get_cartItem(i).getStdPrice();
             } else {
                 return null;
             }

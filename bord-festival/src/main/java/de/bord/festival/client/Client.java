@@ -133,6 +133,10 @@ public class Client implements IClient {
         return _cart.size();
     }
 
+    public int get_ticketsSize(){
+        return _tickets.size();
+    }
+
     public void clear_cart(){
 
         this._cart.clear();
@@ -142,4 +146,5 @@ public class Client implements IClient {
     public void setExpenditure(double expenditure) {
         this.expenditure += expenditure;
     }
+    public double getExpenditure(){return expenditure;}
 }
